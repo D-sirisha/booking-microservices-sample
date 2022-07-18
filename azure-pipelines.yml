@@ -1,0 +1,34 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+
+- task: DockerInstaller@0
+  inputs:
+    dockerVersion: '17.09.0-ce'
+    
+- task: DockerCompose@0
+  inputs:
+    containerregistrytype: 'Azure Container Registry'
+    azureSubscription: 'azure-serviceconnection'
+    azureContainerRegistry: '{"loginServer":"azuredevopssiri.azurecr.io", "id" : "/subscriptions/4f72cf27-fbdd-4dba-85a9-36d16a5ec328/resourceGroups/devops/providers/Microsoft.ContainerRegistry/registries/azuredevopssiri"}'
+    dockerComposeFile: '**/docker-compose.yml'
+    action: 'Build services'
+    includeLatestTag: true
+    
+- task: DockerCompose@0
+  inputs:
+    containerregistrytype: 'Azure Container Registry'
+    azureSubscription: 'azure-serviceconnection'
+    azureContainerRegistry: '{"loginServer":"azuredevopssiri.azurecr.io", "id" : "/subscriptions/4f72cf27-fbdd-4dba-85a9-36d16a5ec328/resourceGroups/devops/providers/Microsoft.ContainerRegistry/registries/azuredevopssiri"}'
+    dockerComposeFile: '**/docker-compose.yml'
+    action: 'Push services'
+    includeLatestTag: true
